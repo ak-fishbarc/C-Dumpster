@@ -4,9 +4,11 @@
 
 int start()
 {   
+    
     char answer[10];
     // Newline character to simplify comparison.
     char option_s[10] = "--start\n";
+    
     printf("Hello, welcome to game of pong. If you would like to start a new \n\
     game, please type in: \n \
 --start \n");
@@ -19,6 +21,7 @@ int start()
     } else {
         return 0;
     }
+    
 }
 
 int main()
