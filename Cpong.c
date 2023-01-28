@@ -19,9 +19,13 @@ Type anything else to exit. \n");
     int equality = strcmp(answer, option_s);
     if(equality == 0)
     {
+        
         return 1;
+        
     } else {
+        
         return 0;
+        
     }
     
 }
@@ -34,11 +38,13 @@ int **create_playing_field(int size_x, int size_y)
     field = malloc(size_x * sizeof(int * ));
     for(int x = 0; x < size_x; x++)
     {
+        
         field[x] = malloc(size_y * sizeof(int));
         for(int i = 0; i < size_y; i++)
         {
             field[x][i] = 1;
         }
+        
     }
     
     // Temporarily here for Debugging, etc. 
@@ -47,7 +53,7 @@ int **create_playing_field(int size_x, int size_y)
     {
         for(int y = 0; y < size_y; y++)
         {
-            printf("%d", field[x][y]);
+            printf(" %d ", field[x][y]);
         }
         
         printf("%s", "\n");
@@ -58,6 +64,36 @@ int **create_playing_field(int size_x, int size_y)
     
 }
 
+int draw_field(int **field, int size_x, int size_y)
+{
+    printf("%s", "\n");
+    for(int x = 0; x < size_x; x++)
+    {
+        for(int y = 0; y < size_y; y++)
+        {
+            printf(" %d ", field[x][y]);
+        }
+        
+        printf("%s", "\n");
+        
+    }
+    
+}
+
+struct Ponger
+{
+    int posx;
+    int posy;
+    int size;
+    int map_repr;
+};
+
+struct PlayingField
+{
+    int sizex;
+    int sizey;
+    int **field;
+};
 
 int main()
 {
@@ -65,10 +101,20 @@ int main()
     int option = start();
     if(option == 1)
     {
+        
         printf("We are here");
-        create_playing_field(10, 10);
+        struct PlayingField pf;
+        pf.sizex = 10;
+        pf.sizey = 10;
+        pf.field = create_playing_field(pf.sizex, pf.sizey);
+        
+        draw_field(pf.field, pf.sizex, pf.sizey);
+
+        
     } else {
+        
         printf("We are there");
+        
     }
     return 0;
     
