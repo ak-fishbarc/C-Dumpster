@@ -48,6 +48,7 @@ int **create_playing_field(int size_x, int size_y)
     }
     
     // Temporarily here for Debugging, etc. 
+    /*
     printf("%s", "\n");
     for(int x = 0; x < size_x; x++)
     {
@@ -59,7 +60,7 @@ int **create_playing_field(int size_x, int size_y)
         printf("%s", "\n");
         
     }
-
+    */
     return field;
     
 }
@@ -102,11 +103,22 @@ int main()
     if(option == 1)
     {
         
-        printf("We are here");
+        struct Ponger pg1;
+        pg1.posx = 3;
+        pg1.posy = 0;
+        pg1.size = 3;
+        pg1.map_repr = 5;
+        
         struct PlayingField pf;
         pf.sizex = 10;
         pf.sizey = 10;
         pf.field = create_playing_field(pf.sizex, pf.sizey);
+        
+        // Place ponger on the map.
+        for(int x = 0; x < pg1.size; x++)
+        {
+            pf.field[pg1.posx-x][pg1.posy] = pg1.map_repr;
+        }
         
         draw_field(pf.field, pf.sizex, pf.sizey);
 
