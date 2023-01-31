@@ -1,8 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
-
+#include <unistd.h>
 
 int start()
 {   
@@ -107,7 +106,7 @@ struct PlayingField
 
 int main()
 {
-    
+    int game = 0;
     int option = start();
     if(option == 1)
     {
@@ -145,10 +144,34 @@ int main()
         }
         
         draw_field(pf.field, pf.sizex, pf.sizey);
-
+        
+        game = 1;
+        while(game == 1)
+        {   
+            sleep(1.0);
+            printf("The game is on!\n");
+            
+            // Place ponger on the map.
+            for(int x = 0; x < pg1.size; x++)
+            {
+                pf.field[pg1.posx-x][pg1.posy] = pg1.map_repr;
+                pf.field[pg2.posx-x][pg2.posy] = pg2.map_repr;
+                pf.field[ball.posx][ball.posy] = ball.map_repr;
+            }
+            
+            /////////// Temporarily here for testing. ///////
+            ball.speed = 1;
+            ball.direction = 1;
+            if(ball.direction == 1)
+            {
+                ball.posy -= ball.speed;
+            }
+            ////////////////////////////////////////////////
+            
+            draw_field(pf.field, pf.sizex, pf.sizey);
+        }
         
     } else {
-        
         printf("We are there");
         
     }
