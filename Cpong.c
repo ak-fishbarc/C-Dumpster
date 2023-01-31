@@ -81,6 +81,15 @@ int draw_field(int **field, int size_x, int size_y)
     
 }
 
+struct Ball
+{
+    int posx;
+    int posy;
+    int map_repr;
+    int speed;
+    int direction;
+};
+
 struct Ponger
 {
     int posx;
@@ -103,21 +112,36 @@ int main()
     if(option == 1)
     {
         
+        struct PlayingField pf;
+        pf.sizex = 10;
+        pf.sizey = 10;
+        pf.field = create_playing_field(pf.sizex, pf.sizey);
+        
         struct Ponger pg1;
         pg1.posx = 3;
         pg1.posy = 0;
         pg1.size = 3;
         pg1.map_repr = 5;
         
-        struct PlayingField pf;
-        pf.sizex = 10;
-        pf.sizey = 10;
-        pf.field = create_playing_field(pf.sizex, pf.sizey);
+        struct Ponger pg2;
+        pg2.posx = 3;
+        pg2.posy = (pf.sizey-1);
+        pg2.size = 3;
+        pg2.map_repr = 5;
+        
+        struct Ball ball;
+        ball.posx = 5;
+        ball.posy = 5;
+        ball.map_repr = 0;
+        ball.speed = 0;
+        ball.direction = 0;
         
         // Place ponger on the map.
         for(int x = 0; x < pg1.size; x++)
         {
             pf.field[pg1.posx-x][pg1.posy] = pg1.map_repr;
+            pf.field[pg2.posx-x][pg2.posy] = pg2.map_repr;
+            pf.field[ball.posx][ball.posy] = ball.map_repr;
         }
         
         draw_field(pf.field, pf.sizex, pf.sizey);
