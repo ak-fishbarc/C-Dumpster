@@ -66,6 +66,7 @@ int **create_playing_field(int size_x, int size_y)
 
 int draw_field(int **field, int size_x, int size_y)
 {
+    
     printf("%s", "\n");
     for(int x = 0; x < size_x; x++)
     {
@@ -146,6 +147,10 @@ int main()
         draw_field(pf.field, pf.sizex, pf.sizey);
         
         game = 1;
+        ball.speed = 1;
+        ball.direction = 1;
+        int old_ball_x = ball.posx;
+        int old_ball_y = ball.posy;
         while(game == 1)
         {   
             sleep(1.0);
@@ -154,27 +159,52 @@ int main()
             // Place ponger on the map.
             for(int x = 0; x < pg1.size; x++)
             {
+                // Clear field behind the ball as it is moving and save its current
+                // position as old position.
+                pf.field[old_ball_x][old_ball_y] = 1;
+                old_ball_x = ball.posx;
+                old_ball_y = ball.posy;
+                ////////////////////////////////////////////////////////////////////
+                
                 pf.field[pg1.posx-x][pg1.posy] = pg1.map_repr;
                 pf.field[pg2.posx-x][pg2.posy] = pg2.map_repr;
                 pf.field[ball.posx][ball.posy] = ball.map_repr;
             }
             
             /////////// Temporarily here for testing. ///////
-            ball.speed = 1;
-            ball.direction = 1;
-            if(ball.direction == 1)
+            switch (ball.direction)
             {
-                ball.posy -= ball.speed;
+                case 1:
+                {
+                    ball.posy -= ball.speed;
+                    break;
+                }
+                case 2:
+                {
+                    ball.posy += ball.speed;
+                    break;
+                }
             }
-            ////////////////////////////////////////////////
+            //////////////////////////////////////////////////
+            // Move ball to the opposite direction if it reaches end of PlayingField
+            // Later to be changed, if ball reaches the end. End the game.
+            if(ball.posy == 0)
+            {
+                ball.direction = 2;
+            }
+            else if(ball.posy == (pf.sizey - 1))
+            {
+                ball.direction = 1;
+            }
             
+
             draw_field(pf.field, pf.sizex, pf.sizey);
         }
         
     } else {
         printf("We are there");
-        
     }
+    
     return 0;
     
 }
