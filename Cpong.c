@@ -88,6 +88,7 @@ struct Ball
     int map_repr;
     int speed;
     int direction;
+    int sway;
 };
 
 struct Ponger
@@ -135,6 +136,7 @@ int main()
         ball.map_repr = 0;
         ball.speed = 0;
         ball.direction = 0;
+        ball.sway = 0;
         
         // Place ponger on the map.
         for(int x = 0; x < pg1.size; x++)
@@ -151,6 +153,7 @@ int main()
         ball.direction = 1;
         int old_ball_x = ball.posx;
         int old_ball_y = ball.posy;
+        
         while(game == 1)
         {   
             sleep(1.0);
@@ -185,18 +188,53 @@ int main()
                     break;
                 }
             }
+            // Sway to make ball randomly go straight, upwards or downwards.
+            // Very crude for now.
+            switch (ball.sway)
+            {
+                case 1:
+                {
+                    ball.posx -= ball.speed;
+                    break;
+                }
+                case 2:
+                {
+                    ball.posx += ball.speed;
+                    break;
+                }
+                case 3:
+                {
+                    ball.posx += ball.speed;
+                    break;
+                }
+                case 4:
+                {
+                    ball.posx -= ball.speed;
+                    break;
+                }
+            }
             //////////////////////////////////////////////////
             // Move ball to the opposite direction if it reaches end of PlayingField
             // Later to be changed, if ball reaches the end. End the game.
             if(ball.posy == 0)
             {
                 ball.direction = 2;
+                ball.sway = rand()&2;
             }
             else if(ball.posy == (pf.sizey - 1))
             {
                 ball.direction = 1;
+                ball.sway = rand()%2;
             }
-            
+            printf("%d", ball.sway);
+            if(ball.posx == 0)
+            {
+                ball.sway = 3;
+            }
+            else if(ball.posx == (pf.sizex - 1))
+            {
+                ball.sway = 4;
+            }
 
             draw_field(pf.field, pf.sizex, pf.sizey);
         }
