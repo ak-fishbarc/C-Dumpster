@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
-
+#include <pthread.h>
 int start()
 {   
     
@@ -154,7 +154,22 @@ int main()
         int old_ball_x = ball.posx;
         int old_ball_y = ball.posy;
         
-
+        /////////////////////
+        ///// THREADING /////
+        ///// Move pg1  /////
+        /////////////////////
+        void * move_pg(void *)
+        {
+            char wsad[2];
+            fgets(wsad, 2, stdin);
+            if(strcmp(wsad, "s") == 0)
+            {
+                pg1.posx += 1;
+            }
+        }
+        pthread_t thread;
+        
+        ///// Main Game /////////////
         while(game == 1)
         {   
             
@@ -175,15 +190,15 @@ int main()
                 pf.field[pg2.posx-x][pg2.posy] = pg2.map_repr;
                 pf.field[ball.posx][ball.posy] = ball.map_repr;
             }
-            //// Move ponger ///
-            char wsad[2];
-            fgets(wsad, 2, stdin);
-            if(strcmp(wsad, "s\n") == 1);
-            {
-                pg1.posx += 1;
-                printf("Here");
-                printf("%s", wsad);
-            }
+            
+           
+            ////////////////////
+            //// Move ponger ///////////////////////////////
+            // Use separate threads for ponger movements ///
+            ////////////////////////////////////////////////
+            pthread_create(&thread, NULL, move_pg, NULL);
+            
+            
             /////////// Temporarily here for testing. ///////
             switch (ball.direction)
             {
