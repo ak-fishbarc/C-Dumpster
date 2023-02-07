@@ -154,8 +154,10 @@ int main()
         int old_ball_x = ball.posx;
         int old_ball_y = ball.posy;
         
+
         while(game == 1)
         {   
+            
             sleep(1.0);
             printf("The game is on!\n");
             
@@ -173,7 +175,15 @@ int main()
                 pf.field[pg2.posx-x][pg2.posy] = pg2.map_repr;
                 pf.field[ball.posx][ball.posy] = ball.map_repr;
             }
-            
+            //// Move ponger ///
+            char wsad[2];
+            fgets(wsad, 2, stdin);
+            if(strcmp(wsad, "s\n") == 1);
+            {
+                pg1.posx += 1;
+                printf("Here");
+                printf("%s", wsad);
+            }
             /////////// Temporarily here for testing. ///////
             switch (ball.direction)
             {
@@ -226,7 +236,6 @@ int main()
                 ball.direction = 1;
                 ball.sway = rand()%2;
             }
-            printf("%d", ball.sway);
             if(ball.posx == 0)
             {
                 ball.sway = 3;
