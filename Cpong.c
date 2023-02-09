@@ -150,10 +150,16 @@ int main()
         draw_field(pf.field, pf.sizex, pf.sizey);
         
         game = 1;
+        
+        /////// Positions for map drawing /////////
         ball.speed = 1;
         ball.direction = 1;
         int old_ball_x = ball.posx;
         int old_ball_y = ball.posy;
+        int old_pg1_x = pg1.posx;
+        int old_pg1_y = pg1.posy;
+        int old_pg2_x = pg2.posx;
+        int old_pg2_y = pg2.posy;
         
         /////////////////////
         ///// THREADING /////
@@ -170,6 +176,25 @@ int main()
         }
         pthread_t thread;
         
+        //////////////////////
+        ///// THREADING //////
+        ///// Move pg2  //////
+        //////////////////////
+        void * move_pg2(void *)
+        {
+            // ball.posx+1 to center the ponger on the ball.
+            if(pg2.posx != ball.posx+1)
+            {
+                if(pg2.posx <= ball.posx)
+                {
+                    pg2.posx += 1;
+                } else if(pg2.posx >= ball.posx) {
+                    pg2.posx -= 1;
+                }
+            }
+        }
+        pthread_t thread2;
+        
         ///// Main Game /////////////
         while(game == 1)
         {   
@@ -177,16 +202,28 @@ int main()
             sleep(1.0);
             printf("The game is on!\n");
             
-            // Place ponger on the map.
-            for(int x = 0; x < pg1.size; x++)
+            // Update position of objects on the map
+            // Clear field behind the ball as it is moving.
+            for(int i = 0; i < pg1.size; i++)
             {
-                // Clear field behind the ball as it is moving and save its current
-                // position as old position.
                 pf.field[old_ball_x][old_ball_y] = 1;
                 old_ball_x = ball.posx;
                 old_ball_y = ball.posy;
-                ////////////////////////////////////////////////////////////////////
-                
+                /* Pongers positions saved for cleaning*/
+                ///////////////////////
+                pf.field[old_pg1_x-i][old_pg1_y] = 1;
+                pf.field[old_pg2_x-i][old_pg2_y] = 1;
+                ///////////////////////
+            }
+            
+            /* Place ponger on the map.
+                Save its current position as old position for map update. */
+            for(int x = 0; x < pg1.size; x++)
+            {   
+                old_pg1_x = pg1.posx;
+                old_pg1_y = pg1.posy;
+                old_pg2_x = pg2.posx;
+                old_pg2_y = pg2.posy;
                 pf.field[pg1.posx-x][pg1.posy] = pg1.map_repr;
                 pf.field[pg2.posx-x][pg2.posy] = pg2.map_repr;
                 pf.field[ball.posx][ball.posy] = ball.map_repr;
@@ -198,7 +235,7 @@ int main()
             // Use separate threads for ponger movements ///
             ////////////////////////////////////////////////
             pthread_create(&thread, NULL, move_pg, NULL);
-            
+            pthread_create(&thread2, NULL, move_pg2, NULL);
             
             /////////// Temporarily here for testing. ///////
             switch (ball.direction)
@@ -240,7 +277,7 @@ int main()
                 }
             }
             //////////////////////////////////////////////////
-            // Move ball to the opposite direction if it reaches end of PlayingField
+            // Move ball in the opposite direction if it reaches end of PlayingField
             // Later to be changed, if ball reaches the end. End the game.
             if(ball.posy == 0)
             {
