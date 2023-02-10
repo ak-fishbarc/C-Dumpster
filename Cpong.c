@@ -171,7 +171,25 @@ int main()
             fgets(wsad, 2, stdin);
             if(strcmp(wsad, "s") == 0)
             {
-                pg1.posx += 1;
+                if(pg1.posx+1 <= pf.sizex-1)
+                {
+                    pg1.posx += 1;
+                }
+                else
+                {
+                    printf("SHOUT !!!");
+                }
+            }
+            else if(strcmp(wsad, "w") == 0)
+            {   
+                if(pg1.posx-3 >= 0)
+                {
+                    pg1.posx -= 1;
+                }
+                else
+                {
+                    printf("SHOUT !!!");
+                }
             }
         }
         pthread_t thread;
@@ -188,7 +206,7 @@ int main()
                 if(pg2.posx <= ball.posx)
                 {
                     pg2.posx += 1;
-                } else if(pg2.posx >= ball.posx) {
+                } else if(pg2.posx >= ball.posx && pg2.posx-3 >= 0) {
                     pg2.posx -= 1;
                 }
             }
@@ -201,35 +219,7 @@ int main()
             
             sleep(1.0);
             printf("The game is on!\n");
-            
-            // Update position of objects on the map
-            // Clear field behind the ball as it is moving.
-            for(int i = 0; i < pg1.size; i++)
-            {
-                pf.field[old_ball_x][old_ball_y] = 1;
-                old_ball_x = ball.posx;
-                old_ball_y = ball.posy;
-                /* Pongers positions saved for cleaning*/
-                ///////////////////////
-                pf.field[old_pg1_x-i][old_pg1_y] = 1;
-                pf.field[old_pg2_x-i][old_pg2_y] = 1;
-                ///////////////////////
-            }
-            
-            /* Place ponger on the map.
-                Save its current position as old position for map update. */
-            for(int x = 0; x < pg1.size; x++)
-            {   
-                old_pg1_x = pg1.posx;
-                old_pg1_y = pg1.posy;
-                old_pg2_x = pg2.posx;
-                old_pg2_y = pg2.posy;
-                pf.field[pg1.posx-x][pg1.posy] = pg1.map_repr;
-                pf.field[pg2.posx-x][pg2.posy] = pg2.map_repr;
-                pf.field[ball.posx][ball.posy] = ball.map_repr;
-            }
-            
-           
+
             ////////////////////
             //// Move ponger ///////////////////////////////
             // Use separate threads for ponger movements ///
@@ -237,20 +227,6 @@ int main()
             pthread_create(&thread, NULL, move_pg, NULL);
             pthread_create(&thread2, NULL, move_pg2, NULL);
             
-            /////////// Temporarily here for testing. ///////
-            switch (ball.direction)
-            {
-                case 1:
-                {
-                    ball.posy -= ball.speed;
-                    break;
-                }
-                case 2:
-                {
-                    ball.posy += ball.speed;
-                    break;
-                }
-            }
             // Sway to make ball randomly go straight, upwards or downwards.
             // Very crude for now.
             switch (ball.sway)
@@ -279,15 +255,31 @@ int main()
             //////////////////////////////////////////////////
             // Move ball in the opposite direction if it reaches end of PlayingField
             // Later to be changed, if ball reaches the end. End the game.
-            if(ball.posy == 0)
+            if(ball.posy == 1)
+            {   
+                if(pf.field[ball.posx][ball.posy-1] != 1)
+                {
+                    ball.direction = 2;
+                    ball.sway = rand()%2;
+                } 
+            } 
+            else if(ball.posy == 0)
             {
-                ball.direction = 2;
-                ball.sway = rand()&2;
+                printf("Player1 lost the game !");
+                break;
+            }
+            else if(ball.posy == (pf.sizey - 2))
+            {
+                if(pf.field[ball.posx][ball.posy+1] != 1)
+                {
+                    ball.direction = 1;
+                    ball.sway = rand()%2;
+                }
             }
             else if(ball.posy == (pf.sizey - 1))
             {
-                ball.direction = 1;
-                ball.sway = rand()%2;
+                printf("Player2 lost the game !");
+                break;
             }
             if(ball.posx == 0)
             {
@@ -297,7 +289,48 @@ int main()
             {
                 ball.sway = 4;
             }
-
+            /////////// Temporarily here for testing. ///////
+            switch (ball.direction)
+            {
+                case 1:
+                {
+                    ball.posy -= ball.speed;
+                    break;
+                }
+                case 2:
+                {
+                    ball.posy += ball.speed;
+                    break;
+                }
+            }
+            
+            // Update position of objects on the map
+            // Clear field behind the ball as it is moving.
+            for(int i = 0; i < pg1.size; i++)
+            {
+                pf.field[old_ball_x][old_ball_y] = 1;
+                old_ball_x = ball.posx;
+                old_ball_y = ball.posy;
+                /* Pongers positions saved for cleaning*/
+                ///////////////////////
+                pf.field[old_pg1_x-i][old_pg1_y] = 1;
+                pf.field[old_pg2_x-i][old_pg2_y] = 1;
+                ///////////////////////
+            }
+            
+            /* Place ponger on the map.
+            Save its current position as old position for map update. */
+            for(int x = 0; x < pg1.size; x++)
+            {   
+                old_pg1_x = pg1.posx;
+                old_pg1_y = pg1.posy;
+                old_pg2_x = pg2.posx;
+                old_pg2_y = pg2.posy;
+                pf.field[pg1.posx-x][pg1.posy] = pg1.map_repr;
+                pf.field[pg2.posx-x][pg2.posy] = pg2.map_repr;
+                pf.field[ball.posx][ball.posy] = ball.map_repr;
+            }
+            
             draw_field(pf.field, pf.sizex, pf.sizey);
         }
         
