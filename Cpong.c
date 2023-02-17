@@ -3,6 +3,7 @@
 #include <string.h>
 #include <unistd.h>
 #include <pthread.h>
+#include <conio.h>
 
 int start()
 {   
@@ -330,7 +331,7 @@ int main()
                 pf.field[pg2.posx-x][pg2.posy] = pg2.map_repr;
                 pf.field[ball.posx][ball.posy] = ball.map_repr;
             }
-            
+            system("clear");
             draw_field(pf.field, pf.sizex, pf.sizey);
         }
         
